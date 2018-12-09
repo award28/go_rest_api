@@ -9,7 +9,7 @@ PATH=$(GOPATH)/src/$(APP_DIR)
 BINARY_NAME=go_rest_api
 APP_PATH=$(PATH)/cmd/app/$(BINARY_NAME).go
 
-all: test install run
+all: install run
 install: 
 	$(GOINSTALL) $(APP_PATH)
 test: 
