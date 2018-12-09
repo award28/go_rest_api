@@ -14,7 +14,8 @@ type UserRouter struct {
 func NewUserRouter(u root.UserService, userHandle func(string, http.Handler)) {
 	userRouter := &UserRouter{u}
 
-	userHandle("/", ErrorHandler{userRouter.createUserHandler})
+	userHandle("/login", ErrorHandler{userRouter.getUserHandler})
+	userHandle("/create", ErrorHandler{userRouter.createUserHandler})
 }
 
 func (ur *UserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) error {
@@ -29,10 +30,25 @@ func (ur *UserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) 
 	err = ur.userService.Create(&user)
 	if err != nil {
 		return StatusError{
-			Code: 400,
+			Code: 500,
 			Err:  err,
 		}
 	}
+	return nil
+}
+
+func (ur *UserRouter) getUserHandler(w http.ResponseWriter, r *http.Request) error {
+	user, err := decodeUser(r)
+	username := user.Username
+
+	u, err := ur.userService.GetByUsername(username)
+	if err != nil {
+		return StatusError{
+			Code: 404,
+			Err:  err,
+		}
+	}
+
 	return nil
 }
 
