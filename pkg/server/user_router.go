@@ -11,10 +11,10 @@ type UserRouter struct {
 	userService root.UserService
 }
 
-func NewUserRouter(u root.UserService, handle func(string, http.Handler)) {
+func NewUserRouter(u root.UserService, userHandle func(string, http.Handler)) {
 	userRouter := &UserRouter{u}
 
-	handle("/", Handler{userRouter.createUserHandler})
+	userHandle("/", ErrorHandler{userRouter.createUserHandler})
 }
 
 func (ur *UserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) error {
