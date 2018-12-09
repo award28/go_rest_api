@@ -49,6 +49,7 @@ func (ur *UserRouter) getUserHandler(w http.ResponseWriter, r *http.Request) err
 		}
 	}
 
+	println(u.Username)
 	return nil
 }
 
