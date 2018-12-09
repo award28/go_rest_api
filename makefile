@@ -20,5 +20,6 @@ clean:
 run:	
 	$(GOBIN)/$(BINARY_NAME)
 deps:
-	$(GOGET) github.com/markbates/bolt
-	$(GOGET) github.com/markbates/pop
+	$(GOGET) github.com/boltdb/bolt
+	$(GOGET) github.com/google/uuid
+	$(GOGET) golang.org/x/crypto/bcrypt
