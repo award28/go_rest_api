@@ -19,16 +19,16 @@ func Test_UserService(t *testing.T) {
 
 func insert_and_retrieve_user_from_bolt(t *testing.T) {
 	//Arrange
-	session, err := bolt.NewSession()
+	db, err := bolt.NewDatabase()
 	if err != nil {
 		log.Fatalf("Unable to connect to bolt: %s", err)
 	}
 	defer func() {
-		session.DeleteBucket(userBucketName)
-		session.Close()
+		db.DeleteBucket(userBucketName)
+		db.Close()
 	}()
 
-	userService := bolt.NewUserService(session, userBucketName, &mock.Hash{})
+	userService := bolt.NewUserService(db, userBucketName, &mock.Hash{})
 
 	testUsername := "integration_test_user"
 	testPassword := "integration_test_password"

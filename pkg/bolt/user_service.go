@@ -8,7 +8,7 @@ import (
 )
 
 type UserService struct {
-	session  *Session
+	db       *Database
 	bkt_name string
 	hash     root.Hash
 }
@@ -20,8 +20,8 @@ var (
 	credentialsErr      = errors.New("Incorrect Credentials.")
 )
 
-func NewUserService(s *Session, bkt_name string, hash root.Hash) *UserService {
-	return &UserService{s, bkt_name, hash}
+func NewUserService(db *Database, bkt_name string, hash root.Hash) *UserService {
+	return &UserService{db, bkt_name, hash}
 }
 
 func (us *UserService) Login(c *root.Credentials) (ru *root.User, err error) {
@@ -98,7 +98,7 @@ func (us *UserService) Signup(nu *root.NewUser) (ru *root.User, err error) {
 }
 
 func (us *UserService) GetByUsername(username string) (ru *root.User, err error) {
-	err = us.session.ViewBucket(us.bkt_name, func(bkt *Bucket) error {
+	err = us.db.ViewBucket(us.bkt_name, func(bkt *Bucket) error {
 		if bkt == nil {
 			return doesNotExistErr
 		} else if buf := bkt.Get([]byte(username)); buf == nil {
@@ -115,7 +115,7 @@ func (us *UserService) GetByUsername(username string) (ru *root.User, err error)
 }
 
 func (us *UserService) Create(u *root.User) (err error) {
-	err = us.session.UpdateBucket(us.bkt_name, func(bkt *Bucket) error {
+	err = us.db.UpdateBucket(us.bkt_name, func(bkt *Bucket) error {
 		if buf, err := json.Marshal(&u); err != nil {
 			return err
 		} else if err := bkt.Put([]byte(u.Username), buf); err != nil {

@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	//	"github.com/gorilla/sessions"
 	"go_rest_api/pkg"
 	"net/http"
 )
@@ -31,6 +32,7 @@ func (ur *UserRouter) signupHandler(w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
