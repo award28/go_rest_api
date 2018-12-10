@@ -28,3 +28,4 @@ deps:
 	$(GOGET) github.com/boltdb/bolt
 	$(GOGET) github.com/google/uuid
 	$(GOGET) golang.org/x/crypto/bcrypt
+	$(GOGET) github.com/gorilla/sessions
