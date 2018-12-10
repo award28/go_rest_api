@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	blt, err := bolt.NewSession()
+	blt, err := bolt.NewDatabase()
 	if err != nil {
 		log.Fatalln("unable to connect to boltdb")
 	}
