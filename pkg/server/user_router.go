@@ -15,10 +15,10 @@ func NewUserRouter(u root.UserService, userHandle func(string, http.Handler)) {
 	userRouter := &UserRouter{u}
 
 	userHandle("/login", ErrorHandler{userRouter.getUserHandler})
-	userHandle("/create", ErrorHandler{userRouter.createUserHandler})
+	userHandle("/create", ErrorHandler{userRouter.signupHandler})
 }
 
-func (ur *UserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) error {
+func (ur *UserRouter) signupHandler(w http.ResponseWriter, r *http.Request) error {
 	user, err := decodeUser(r)
 	if err != nil {
 		return StatusError{
@@ -27,7 +27,7 @@ func (ur *UserRouter) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-	err = ur.userService.Create(&user)
+	_, err = ur.userService.Signup(&user)
 	if err != nil {
 		return StatusError{
 			Code: 500,
