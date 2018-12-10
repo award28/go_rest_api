@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"go_rest_api/pkg"
+	"net/http"
 )
 
 type UserService struct {
@@ -12,7 +13,12 @@ type UserService struct {
 	hash     root.Hash
 }
 
-var doesNotExistErr = errors.New("User does not exist.")
+var (
+	doesNotExistErr     = errors.New("User does not exist.")
+	usernameConflictErr = errors.New("Username is taken.")
+	notHashableErr      = errors.New("Could not hash password.")
+	credentialsErr      = errors.New("Incorrect Credentials.")
+)
 
 func NewUserService(s *Session, bkt_name string, hash root.Hash) *UserService {
 	return &UserService{s, bkt_name, hash}
@@ -20,32 +26,61 @@ func NewUserService(s *Session, bkt_name string, hash root.Hash) *UserService {
 
 func (us *UserService) Login(c *root.Credentials) (ru *root.User, err error) {
 	// Verify credentials
+	if err := nonEmptyFields_Credentials(*c); err != nil {
+		return nil, root.StatusError{
+			Code: http.StatusBadRequest,
+			Err:  err,
+		}
+	}
 
 	// Compare credentials to stored credentials
-
-	// Login User
-
-	return nil, nil
+	if user, err := us.GetByUsername(c.Username); err != nil {
+		if err == doesNotExistErr {
+			return nil, root.StatusError{
+				Code: http.StatusNotFound,
+				Err:  err,
+			}
+		} else {
+			return nil, err
+		}
+	} else if err = us.hash.Compare(user.Password, c.Password); err != nil {
+		return nil, root.StatusError{
+			Code: http.StatusUnauthorized,
+			Err:  credentialsErr,
+		}
+	} else {
+		user.Password = ""
+		return user, nil
+	}
 }
 
 func (us *UserService) Signup(nu *root.NewUser) (ru *root.User, err error) {
 	// Verify new user details
 	if err := nonEmptyFields_NewUser(*nu); err != nil {
-		return nil, err
+		return nil, root.StatusError{
+			Code: http.StatusBadRequest,
+			Err:  err,
+		}
 	}
 	if err := verifyFields_NewUser(*nu); err != nil {
-		return nil, err
+		return nil, root.StatusError{
+			Code: http.StatusBadRequest,
+			Err:  err,
+		}
 	}
 
 	// Check if user with username exists
 	if _, err := us.GetByUsername(nu.Username); err != doesNotExistErr {
-		return nil, errors.New("Username is taken.")
+		return nil, root.StatusError{
+			Code: http.StatusConflict,
+			Err:  usernameConflictErr,
+		}
 	}
 
 	// Hash Password
 	nu.Password, err = us.hash.Generate(nu.Password)
 	if err != nil {
-		return nil, errors.New("Could not hash password.")
+		return nil, notHashableErr
 	}
 
 	// Create user

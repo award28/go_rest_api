@@ -9,6 +9,18 @@ import (
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
+func nonEmptyFields_Credentials(c root.Credentials) error {
+	var missing strings.Builder
+	missing.WriteString(emptyOr(c.Username, "username\n"))
+	missing.WriteString(emptyOr(c.Password, "password\n"))
+
+	if missing.String() == "" {
+		return nil
+	} else {
+		return errors.New("The following fields are required:\n" + missing.String())
+	}
+}
+
 func nonEmptyFields_NewUser(nu root.NewUser) error {
 	var missing strings.Builder
 	missing.WriteString(emptyOr(nu.Username, "username\n"))
