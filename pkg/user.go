@@ -19,7 +19,11 @@ type NewUser struct {
 	PasswordConfirm string `json:"password_confirm"`
 }
 
+type UserMiddleware interface {
+}
+
 type UserService interface {
+	Me() (*User, error)
 	Login(c *Credentials) (*User, error)
 	Signup(nu *NewUser) (*User, error)
 	GetByUsername(username string) (*User, error)

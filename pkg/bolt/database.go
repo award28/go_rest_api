@@ -27,8 +27,8 @@ func (d *Database) ViewBucket(bkt_name string, fn func(*Bucket) error) error {
 	return d.db.View(func(tx *bolt.Tx) error {
 		return fn(tx.Bucket([]byte(bkt_name)))
 	})
-
 }
+
 func (d *Database) UpdateBucket(bkt_name string, fn func(*Bucket) error) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		bkt, err := tx.CreateBucketIfNotExists([]byte(bkt_name))

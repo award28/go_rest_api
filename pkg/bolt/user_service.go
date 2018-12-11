@@ -24,6 +24,11 @@ func NewUserService(db *Database, bkt_name string, hash root.Hash) *UserService 
 	return &UserService{db, bkt_name, hash}
 }
 
+// TODO
+func (us *UserService) Me() (*root.User, error) {
+	return nil, nil
+}
+
 func (us *UserService) Login(c *root.Credentials) (ru *root.User, err error) {
 	// Verify credentials
 	if err := nonEmptyFields_Credentials(*c); err != nil {
