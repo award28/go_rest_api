@@ -1,5 +1,9 @@
 package root
 
+import (
+	"net/http"
+)
+
 type Credentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -19,13 +23,16 @@ type NewUser struct {
 	PasswordConfirm string `json:"password_confirm"`
 }
 
-type UserMiddleware interface {
-}
-
 type UserService interface {
 	Me() (*User, error)
 	Login(c *Credentials) (*User, error)
 	Signup(nu *NewUser) (*User, error)
 	GetByUsername(username string) (*User, error)
 	Create(u *User) error
+}
+
+type UserStore interface {
+	GetSessionUser(*http.Request) (*User, error)
+	SetSessionUser(*http.Request, http.ResponseWriter, *User) error
+	DeleteSessionUser(*http.Request, http.ResponseWriter) error
 }

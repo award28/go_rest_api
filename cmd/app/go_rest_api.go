@@ -4,6 +4,7 @@ import (
 	"go_rest_api/pkg/bolt"
 	"go_rest_api/pkg/crypto"
 	"go_rest_api/pkg/server"
+	"go_rest_api/pkg/sessionStore"
 	"log"
 )
 
@@ -15,8 +16,10 @@ func main() {
 	defer blt.Close()
 
 	h := crypto.Hash{}
-	u := bolt.NewUserService(blt, "users", &h)
-	s := server.NewServer(u)
+	userService := bolt.NewUserService(blt, "users", &h)
+	store := sessionStore.NewStore("users")
+	userStore := sessionStore.NewUserStore(store)
+	s := server.NewServer(userService, userStore)
 
 	s.Start()
 }

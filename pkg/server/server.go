@@ -10,8 +10,8 @@ type Server struct {
 	*http.Server
 }
 
-func NewServer(u root.UserService) *Server {
-	NewUserRouter(u, handleGroup("/u"))
+func NewServer(userService root.UserService, userStore root.UserStore) *Server {
+	NewUserRouter(userService, userStore, handleGroup("/u"))
 	return &Server{&http.Server{Addr: ":8080"}}
 }
 

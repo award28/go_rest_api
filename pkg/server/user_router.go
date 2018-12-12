@@ -3,20 +3,57 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	//	"github.com/gorilla/sessions"
+	"fmt"
 	"go_rest_api/pkg"
 	"net/http"
 )
 
 type UserRouter struct {
 	userService root.UserService
+	userStore   root.UserStore
 }
 
-func NewUserRouter(u root.UserService, userHandle func(string, http.Handler)) {
-	userRouter := &UserRouter{u}
+func NewUserRouter(userService root.UserService, userStore root.UserStore, userHandle func(string, http.Handler)) {
+	userRouter := &UserRouter{
+		userService: userService,
+		userStore:   userStore,
+	}
 
+	userHandle("/", ErrorHandler{userRouter.meHandler})
 	userHandle("/login", ErrorHandler{userRouter.loginHandler})
 	userHandle("/signup", ErrorHandler{userRouter.signupHandler})
+	userHandle("/logout", ErrorHandler{userRouter.logoutHandler})
+}
+
+func (ur *UserRouter) meHandler(w http.ResponseWriter, r *http.Request) error {
+	user, err := ur.userStore.GetSessionUser(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return nil
+	}
+
+	fmt.Fprintf(w, "username: %s, password: %s", user.Username, user.Password)
+	return nil
+}
+
+func (ur *UserRouter) loginHandler(w http.ResponseWriter, r *http.Request) error {
+	credentials, err := decodeCredentials(r)
+
+	user, err := ur.userService.Login(&credentials)
+	if err != nil {
+		return root.StatusError{
+			Code: 404,
+			Err:  err,
+		}
+	}
+
+	err = ur.userStore.SetSessionUser(r, w, user)
+	if err != nil {
+		return nil
+	}
+
+	fmt.Fprintf(w, "Welcome, %s!", user.Username)
+	return nil
 }
 
 func (ur *UserRouter) signupHandler(w http.ResponseWriter, r *http.Request) error {
@@ -28,25 +65,27 @@ func (ur *UserRouter) signupHandler(w http.ResponseWriter, r *http.Request) erro
 		}
 	}
 
-	_, err = ur.userService.Signup(&new_user)
+	user, err := ur.userService.Signup(&new_user)
 	if err != nil {
 		return err
 	}
 
+	err = ur.userStore.SetSessionUser(r, w, user)
+	if err != nil {
+		return nil
+	}
+
+	fmt.Fprintf(w, "Welcome, %s!", user.Username)
 	return nil
 }
 
-func (ur *UserRouter) loginHandler(w http.ResponseWriter, r *http.Request) error {
-	credentials, err := decodeCredentials(r)
-
-	_, err = ur.userService.Login(&credentials)
+func (ur *UserRouter) logoutHandler(w http.ResponseWriter, r *http.Request) error {
+	err := ur.userStore.DeleteSessionUser(r, w)
 	if err != nil {
-		return root.StatusError{
-			Code: 404,
-			Err:  err,
-		}
+		return nil
 	}
 
+	fmt.Fprintf(w, "You are now logged out.")
 	return nil
 }
 
