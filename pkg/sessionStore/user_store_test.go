@@ -17,7 +17,7 @@ const (
 
 func Test_User_Store(t *testing.T) {
 	t.Run("Create and Retrieve session user", create_and_retrieve_session_user)
-	t.Run("Create and Retrieve session user", verify_session_user_deletion)
+	t.Run("Verify session user deletion", verify_session_user_deletion)
 }
 
 func user_setup() (*sessionStore.UserStore, http.ResponseWriter, *http.Request) {
