@@ -47,3 +47,7 @@ func (s *Store) Set(r *http.Request, w http.ResponseWriter, fn func(*Session) er
 	}
 	return nil
 }
+
+func (s *Store) DeleteStore() {
+	s.store.MaxAge(-1)
+}
