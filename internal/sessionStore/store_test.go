@@ -3,7 +3,7 @@ package sessionStore_test
 import (
 	"encoding/gob"
 	"errors"
-	"go_rest_api/pkg/sessionStore"
+	"go_rest_api/internal/sessionStore"
 	"log"
 	"net/http"
 	"net/http/httptest"

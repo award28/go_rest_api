@@ -1,8 +1,8 @@
 package sessionStore_test
 
 import (
-	"go_rest_api/pkg"
-	"go_rest_api/pkg/sessionStore"
+	"go_rest_api/internal"
+	"go_rest_api/internal/sessionStore"
 	"log"
 	"net/http"
 	"net/http/httptest"

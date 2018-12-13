@@ -1,9 +1,9 @@
 package bolt_test
 
 import (
-	"go_rest_api/pkg"
-	"go_rest_api/pkg/bolt"
-	"go_rest_api/pkg/mock"
+	"go_rest_api/internal"
+	"go_rest_api/internal/bolt"
+	"go_rest_api/internal/mock"
 	"log"
 	"testing"
 )

@@ -1,7 +1,7 @@
 package crypto_test
 
 import (
-	"go_rest_api/pkg/crypto"
+	"go_rest_api/internal/crypto"
 	"testing"
 )
 

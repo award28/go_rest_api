@@ -2,7 +2,7 @@ package bolt
 
 import (
 	"errors"
-	"go_rest_api/pkg"
+	"go_rest_api/internal"
 	"regexp"
 	"strings"
 )

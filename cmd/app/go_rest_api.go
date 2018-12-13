@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go_rest_api/pkg/bolt"
-	"go_rest_api/pkg/crypto"
-	"go_rest_api/pkg/server"
-	"go_rest_api/pkg/sessionStore"
+	"go_rest_api/internal/bolt"
+	"go_rest_api/internal/crypto"
+	"go_rest_api/internal/server"
+	"go_rest_api/internal/sessionStore"
 	"log"
 )
 

@@ -3,7 +3,7 @@ package bolt
 import (
 	"encoding/json"
 	"errors"
-	"go_rest_api/pkg"
+	"go_rest_api/internal"
 	"net/http"
 )
 

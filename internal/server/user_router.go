@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go_rest_api/pkg"
+	"go_rest_api/internal"
 	"net/http"
 )
 
