@@ -8,6 +8,10 @@ import (
 	"log"
 )
 
+const (
+	USERS = "users"
+)
+
 func main() {
 	blt, err := bolt.NewDatabase()
 	if err != nil {
@@ -16,8 +20,8 @@ func main() {
 	defer blt.Close()
 
 	h := crypto.Hash{}
-	userService := bolt.NewUserService(blt, "users", &h)
-	store := sessionStore.NewStore("users")
+	userService := bolt.NewUserService(blt, USERS, &h)
+	store := sessionStore.NewStore(USERS)
 	userStore := sessionStore.NewUserStore(store)
 	s := server.NewServer(userService, userStore)
 
