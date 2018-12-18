@@ -13,6 +13,10 @@ type UserRouter struct {
 	userStore   root.UserStore
 }
 
+var (
+	noReqBodyErr = errors.New("no request body")
+)
+
 func NewUserRouter(userService root.UserService, userStore root.UserStore, userHandle func(string, http.Handler)) {
 	userRouter := &UserRouter{
 		userService: userService,
@@ -92,7 +96,7 @@ func (ur *UserRouter) logoutHandler(w http.ResponseWriter, r *http.Request) erro
 func decodeCredentials(r *http.Request) (root.Credentials, error) {
 	var c root.Credentials
 	if r.Body == nil {
-		return c, errors.New("no request body")
+		return c, noReqBodyErr
 	}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&c)
@@ -102,7 +106,7 @@ func decodeCredentials(r *http.Request) (root.Credentials, error) {
 func decodeUser(r *http.Request) (root.User, error) {
 	var u root.User
 	if r.Body == nil {
-		return u, errors.New("no request body")
+		return u, noReqBodyErr
 	}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&u)
@@ -112,7 +116,7 @@ func decodeUser(r *http.Request) (root.User, error) {
 func decodeNewUser(r *http.Request) (root.NewUser, error) {
 	var nu root.NewUser
 	if r.Body == nil {
-		return nu, errors.New("no request body")
+		return nu, noReqBodyErr
 	}
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&nu)
