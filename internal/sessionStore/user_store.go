@@ -11,6 +11,10 @@ var (
 	noSessionUserErr = errors.New("No current user in session.")
 )
 
+const (
+	USER = "user"
+)
+
 type UserStore struct {
 	store *Store
 }
@@ -24,7 +28,7 @@ func NewUserStore(store *Store) *UserStore {
 
 func (us *UserStore) GetSessionUser(r *http.Request) (user *root.User, err error) {
 	err = us.store.Get(r, func(s *Session) error {
-		val, ok := s.Values["user"]
+		val, ok := s.Values[USER]
 		if !ok {
 			return noSessionUserErr
 		}
@@ -45,18 +49,18 @@ func (us *UserStore) GetSessionUser(r *http.Request) (user *root.User, err error
 
 func (us *UserStore) SetSessionUser(r *http.Request, w http.ResponseWriter, u *root.User) error {
 	return us.store.Set(r, w, func(s *Session) error {
-		s.Values["user"] = u
+		s.Values[USER] = u
 		return nil
 	})
 }
 
 func (us *UserStore) DeleteSessionUser(r *http.Request, w http.ResponseWriter) error {
 	return us.store.Set(r, w, func(s *Session) error {
-		_, ok := s.Values["user"]
+		_, ok := s.Values[USER]
 		if !ok {
 			return noSessionUserErr
 		}
-		delete(s.Values, "user")
+		delete(s.Values, USER)
 		return nil
 	})
 }
