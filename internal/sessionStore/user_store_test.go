@@ -32,15 +32,19 @@ func create_and_retrieve_session_user(t *testing.T) {
 	store, w, r := user_setup()
 	defer store.DeleteSessionUser(r, w)
 
+	log_error = func(t string, err error) {
+		log.Fatalf("Unable to %s session user, reason: %s", t, err.Error())
+	}
+
 	actualUser := &root.User{testUsername, testEmail, testPassword}
 	err := store.SetSessionUser(r, w, actualUser)
 	if err != nil {
-		log.Fatalf("Unable to set session user, reason: %s", err.Error())
+		log_set_error("set", err)
 	}
 
 	responseUser, err := store.GetSessionUser(r)
 	if err != nil {
-		log.Fatalf("Unable to get session user, reason: %s", err.Error())
+		log_set_error("get", err)
 	}
 
 	if actualUser != responseUser {
@@ -52,7 +56,7 @@ func verify_session_user_deletion(t *testing.T) {
 
 	err := store.SetSessionUser(r, w, &root.User{testUsername, testEmail, testPassword})
 	if err != nil {
-		log.Fatalf("Unable to set session user, reason: %s", err.Error())
+		log_set_error("set", err)
 	}
 
 	store.DeleteSessionUser(r, w)
